@@ -18,6 +18,8 @@ df = pd.DataFrame(columns=columns)
 
 if res.status_code == 200:
     timelines = json.loads(res.text)
+    print(len(timelines))
+
     for tweet in timelines:
         text = tweet['text']
         created_at = tweet['created_at']
@@ -25,6 +27,6 @@ if res.status_code == 200:
         df_next = pd.DataFrame([append_list], columns = columns)
         df = df.append(df_next)
     #print(df)
-    df.to_csv("C:/Users/amaga/Dropbox/twitter_app/new_tweets.csv", encoding = 'utf-8_sig')
+    df.to_csv("tweets.csv", encoding = 'utf-8_sig')
 else:
     print("Failed: %d" % res.status_code)
