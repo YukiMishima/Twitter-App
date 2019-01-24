@@ -30,7 +30,7 @@ def getSearchIdsList(): #標準入力から入力されたサーチしてほし�
             search_ids.append(inputed_id)
     return search_ids
 
-def getFollowerIdsList(search_id): #引数にツイッターID、リスト形式でフォロワーのツイッターIDを返します  
+def getFollowerIdsList(search_id): #引数にツイッターID、リスト形式でフォロワーのツイッターIDを返す 
 
     followers_ids = tweepy.Cursor(api.followers_ids, id = search_id, cursor = -1).items()
     followers_ids_list = []
@@ -44,12 +44,12 @@ def getFollowerIdsList(search_id): #引数にツイッターID、リスト形式
 
     return followers_ids_list
 
-def getFollowers(userID): #ユーザーIDを指定して、フォロワー数を返します
+def getFollowers(userID): #ユーザーIDを指定して、フォロワー数を返す
     user = api.get_user(userID)
     followersCount = user.followers_count
     return followersCount
 
-def getFollowings(userID): #ユーザーIDを指定して、フォロー数を返します
+def getFollowings(userID): #ユーザーIDを指定して、フォロー数を返す
     user = api.get_user(userID)
     followingCount = user.friends_count
     return followingCount
@@ -69,15 +69,15 @@ if __name__ == "__main__":
                 followers = getFollowers(followerId)
                 followings = getFollowings(followerId)
                 se = pandas.Series([userid, followers, followings],['userid','followers','followings'])
-                print('now searching id is ... '+search_id)
+                print('now searching id is ... ' + search_id)
+                # print('followersCount is .. ' + followersCount)
                 print(se)
                 count += 1
-                print("{}%".format((count + skip) / followersCount)*100)
-                print('++++++++++++++++++++')
                 df = df.append(se, ignore_index=True)
             except:
                 print("Failed to retrieve user...retry")
                 skip += 1
-                print("{}%".format(round((count + skip) / followersCount)*100))
                 time.sleep(10)
-        df.to_csv("{}.csv".format(search_id)) # pandasでcsvに保存する
+            print("progres : {}%".format(round(((count+skip)/followersCount)*100)))
+            print("++++++++++++++++++++++++")
+            df.to_csv("{}.csv".format(search_id)) # pandasでcsvに保存する
