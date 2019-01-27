@@ -4,11 +4,6 @@ import pandas
 import time
 import config
 
-# search_id = "chilffy" #ツイッターのID
-df = pandas.read_csv('default.csv', index_col=0)
-count = 0
-skip = 0
-
 CK = config.CONSUMER_KEY
 CS = config.CONSUMER_SECRET
 AT = config.ACCESS_TOKEN
@@ -44,40 +39,25 @@ def getFollowerIdsList(search_id): #引数にツイッターID、リスト形式
 
     return followers_ids_list
 
-def getFollowers(userID): #ユーザーIDを指定して、フォロワー数を返す
-    user = api.get_user(userID)
-    followersCount = user.followers_count
-    return followersCount
-
-def getFollowings(userID): #ユーザーIDを指定して、フォロー数を返す
-    user = api.get_user(userID)
-    followingCount = user.friends_count
-    return followingCount
-
 if __name__ == "__main__":
 
     id_list = getSearchIdsList()
+    all_ids = []
 
     for search_id in id_list:
         followerIdsList = getFollowerIdsList(search_id)
         followersCount = len(followerIdsList)
         count = 0
-        skip = 0
         for followerId in followerIdsList:
             try:
                 userid = api.get_user(followerId).screen_name
-                followers = getFollowers(followerId)
-                followings = getFollowings(followerId)
-                se = pandas.Series([userid, followers, followings],['userid','followers','followings'])
                 print('now searching id is ... ' + search_id)
-                # print('followersCount is .. ' + followersCount)
-                print(se)
+                print('userid', userid)
                 count += 1
-                df = df.append(se, ignore_index=True)
+                all_ids.append(userid)
             except:
                 print("Failed to retrieve user...retry")
-                skip += 1
                 time.sleep(10)
-            print("progres : {}%".format(round(((count+skip)/followersCount)*100)))
+            print("progress : {}%".format(round((count/followersCount)*100)))
             print("++++++++++++++++++++++++")
-            df.to_csv("{}.csv".format(search_id)) # pandasでcsvに保存する
+    print(all_ids)
