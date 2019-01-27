@@ -3,6 +3,7 @@ import os
 import pandas
 import time
 import config
+import collections
 
 CK = config.CONSUMER_KEY
 CS = config.CONSUMER_SECRET
@@ -26,14 +27,13 @@ def getSearchIdsList(): #標準入力から入力されたサーチしてほし�
     return search_ids
 
 def getFollowerIdsList(search_id): #引数にツイッターID、リスト形式でフォロワーのツイッターIDを返す 
-
+    
     followers_ids = tweepy.Cursor(api.followers_ids, id = search_id, cursor = -1).items()
     followers_ids_list = []
 
     try:
         for followers_id in followers_ids:
             followers_ids_list.append(followers_id)
-
     except tweepy.error.TweepError as e:
         print (e.reason)
 
@@ -60,4 +60,5 @@ if __name__ == "__main__":
                 time.sleep(10)
             print("progress : {}%".format(round((count/followersCount)*100)))
             print("++++++++++++++++++++++++")
-    print(all_ids)
+    id_collection = collections.Counter(all_ids)
+    print(id_collection.most_common()[:10])
